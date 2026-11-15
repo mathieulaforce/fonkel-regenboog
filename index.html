@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="nl-BE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Fonkel en de Verdwenen Regenboog</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#2b1b4d;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;overflow:hidden;
+    font-family:"Baloo 2","Fredoka","Comic Sans MS","Chalkboard SE","Comic Neue","Trebuchet MS",sans-serif;
+    border-radius:18px;background:#7fd0ff}
+  #scene{position:absolute;left:0;top:0;display:block}
+  #scene text{font-family:inherit;font-weight:900}
+  #fade{position:absolute;inset:0;background:#2b1b4d;opacity:0;transition:opacity .3s;pointer-events:none;z-index:4}
+  #bubble{position:absolute;display:none;box-sizing:border-box;max-width:660px;min-width:220px;padding:14px 28px 18px;
+    background:#fff;border:6px solid #ffb3de;border-radius:38px;font-size:34px;line-height:1.22;color:#4b3060;
+    font-weight:700;box-shadow:0 8px 0 rgba(0,0,0,.15);z-index:5;text-align:center}
+  #bubble b{display:block;font-size:21px;letter-spacing:2px;text-transform:uppercase}
+  #bubble::after{content:"";position:absolute;left:var(--tail,50%);bottom:-30px;margin-left:-16px;
+    border:16px solid transparent;border-top-color:#ffb3de}
+
+  #stage{cursor:url(cursor/wand.svg) 17 15,auto}
+  [data-hot],[data-go],[data-tap],[data-fun],[data-ui],#bubble{cursor:url(cursor/wand-on.svg) 17 15,pointer}
+  .np{pointer-events:none}
+  .in{transform-box:fill-box;transform-origin:50% 100%}
+  .a-jump{animation:jump .65s ease-out}
+  @keyframes jump{0%{transform:none}15%{transform:scale(1.1,.85)}45%{transform:translateY(-70px) scale(.95,1.08)}80%{transform:scale(1.08,.9)}100%{transform:none}}
+  .a-spin{animation:spin .8s ease-in-out;transform-origin:50% 50%}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .a-wiggle{animation:wiggle .6s}
+  @keyframes wiggle{20%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}80%{transform:rotate(-5deg)}}
+  .a-grow{animation:grow .7s}
+  @keyframes grow{40%{transform:scale(1.5)}70%{transform:scale(.9)}}
+  .a-twinkle{animation:twinkle .7s;transform-origin:50% 50%}
+  @keyframes twinkle{30%{transform:scale(1.3);filter:brightness(1.5)}}
+  .talk{animation:talk .36s ease-in-out infinite}
+  @keyframes talk{50%{transform:translateY(-8px) scale(1.02,.98)}}
+  .dance{animation:dance .6s ease-in-out infinite}
+  @keyframes dance{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-16px)}}
+  .pulse{animation:pulse 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+  @keyframes pulse{50%{transform:scale(1.12)}}
+  .bobber{animation:bob 3s ease-in-out infinite;transform-box:fill-box}
+  @keyframes bob{50%{transform:translateY(-10px)}}
+  .drift{animation:drift 14s ease-in-out infinite alternate}
+  @keyframes drift{to{transform:translateX(70px)}}
+  .rays{animation:spin 30s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+  .flutter{animation:flutter 7s ease-in-out infinite alternate;transform-box:fill-box}
+  @keyframes flutter{25%{transform:translate(60px,-40px)}50%{transform:translate(130px,10px)}75%{transform:translate(50px,40px)}100%{transform:translate(-30px,-20px)}}
+  .leg{transform-box:fill-box;transform-origin:50% 0}
+  .walking .leg.la{animation:legA .42s linear infinite}
+  .walking .leg.lb{animation:legA .42s linear infinite reverse}
+  @keyframes legA{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-22deg)}}
+  .walking>.in{animation:talk .21s ease-in-out infinite}
+  .tail{transform-box:fill-box;transform-origin:100% 0;animation:swish 2.2s ease-in-out infinite}
+  @keyframes swish{50%{transform:rotate(9deg)}}
+  .wing{transform-box:fill-box;transform-origin:100% 100%}
+  .flying .wing{animation:flap .35s ease-in-out infinite}
+  @keyframes flap{50%{transform:rotate(28deg) scaleY(.7)}}
+  .wave-arm{transform-box:fill-box;transform-origin:0 100%;animation:wavearm 1.4s ease-in-out infinite}
+  @keyframes wavearm{50%{transform:rotate(16deg)}}
+  .sad .m-happy,.happy .m-sad,.happy .tear{display:none}
+  .owl .open{display:none}.owl.on .open{display:inline}.owl.on .closed{display:none}
+  .glow{animation:glow 1.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+  @keyframes glow{50%{transform:scale(1.15) rotate(8deg);filter:brightness(1.25)}}
+  .flame{animation:flame .3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes flame{to{transform:scale(1.08,1.2)}}
+  .fwing{transform-box:fill-box;transform-origin:100% 50%;animation:fflap .22s ease-in-out infinite}
+  .fw2{transform-origin:0 50%}
+  @keyframes fflap{50%{transform:scaleX(.55)}}
+  .in.top{transform-origin:50% 0}
+  .card{transition:transform .2s}
+  .wavel{animation:wavel 3s ease-in-out infinite alternate}
+  @keyframes wavel{to{transform:translateX(40px)}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="scene" viewBox="0 0 1600 900" width="1600" height="900">
+    <defs>
+      <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cc5ff"/><stop offset="1" stop-color="#e3f6ff"/></linearGradient>
+      <linearGradient id="gSky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a9cff"/><stop offset="1" stop-color="#cfeeff"/></linearGradient>
+      <linearGradient id="gForest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9e6c0"/><stop offset="1" stop-color="#eefbc9"/></linearGradient>
+      <linearGradient id="gCave" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1d49"/><stop offset="1" stop-color="#54407f"/></linearGradient>
+      <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fd0f5"/><stop offset="1" stop-color="#2f86cf"/></linearGradient>
+      <linearGradient id="gDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b3394"/><stop offset=".7" stop-color="#e77fa8"/><stop offset="1" stop-color="#ffb37a"/></linearGradient>
+      <clipPath id="cpOpen"><ellipse cx="1580" cy="560" rx="270" ry="330"/></clipPath>
+    </defs>
+    <g id="sceneL"></g>
+    <g id="heroL"></g>
+    <g id="fxL"></g>
+    <g id="hudL"></g>
+    <g id="mapL"></g>
+  </svg>
+  <div id="bubble"></div>
+  <div id="fade"></div>
+</div>
+<script src="voice/manifest.js"></script>
+<script src="tekst.js"></script>
+<script src="art.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
